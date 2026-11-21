@@ -61,6 +61,18 @@ jobs:
           done
           echo "=== disk ==="; df -h /
 
+      - name: Login session proof
+        run: |
+          echo "=== logged-in user ==="
+          whoami
+          id
+          echo "=== active sessions ==="
+          who || true
+          echo "=== host ==="
+          hostname
+          uptime
+          echo "MACOS LOGIN OK: $(whoami) @ macOS $(sw_vers -productVersion) ($(uname -m))"
+
   # ---------------------------------------------------------------- Node
   node:
     name: Node (macOS ${{ github.event.inputs.runner_arch || 'arm64' }})
