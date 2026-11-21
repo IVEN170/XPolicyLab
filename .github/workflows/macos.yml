@@ -170,8 +170,12 @@ jobs:
       - name: Test
         if: steps.detect.outputs.has == 'true'
         run: |
-          if [ -d tests ] || ls test_*.py >/dev/null 2>&1; then
-            pytest -q
+          # 只跑根目錄的測試，避免把子專案（各自的依賴）一併收集。
+          args=""
+          if [ -d tests ]; then args="tests"; fi
+          for f in test_*.py; do [ -e "$f" ] && args="$args $f"; done
+          if [ -n "$args" ]; then
+            pytest -q $args
           else
             echo "no tests; running import smoke check"
             printf '%s\n' \
