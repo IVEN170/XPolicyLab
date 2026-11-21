@@ -219,6 +219,22 @@ jobs:
             python /tmp/smoke.py
           fi
 
+      - name: Build wheel + sdist
+        if: steps.detect.outputs.has == 'true'
+        run: |
+          python -m pip install --upgrade build
+          python -m build --sdist --wheel --outdir dist
+          ls -lh dist
+
+      - name: Upload python dist
+        if: steps.detect.outputs.has == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-dist-${{ github.run_id }}
+          if-no-files-found: warn
+          retention-days: 7
+          path: dist/*
+
   # ----------------------------------------------------------------- JVM
   jvm:
     name: JVM (macOS ${{ github.event.inputs.runner_arch || 'arm64' }})
