@@ -46,7 +46,7 @@ jobs:
   node:
     name: Node (macOS ${{ github.event.inputs.runner_arch || 'arm64' }})
     if: ${{ github.event_name != 'workflow_dispatch' || inputs.profile == 'node' || inputs.profile == 'all' }}
-    runs-on: ${{ (github.event.inputs.runner_arch == 'x64') && 'macos-13' || 'macos-14' }}
+    runs-on: ${{ (github.event.inputs.runner_arch == 'x64') && 'macos-26-intel' || 'macos-26' }}
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
@@ -104,7 +104,7 @@ jobs:
   python:
     name: Python (macOS ${{ github.event.inputs.runner_arch || 'arm64' }})
     if: ${{ github.event_name != 'workflow_dispatch' || inputs.profile == 'python' || inputs.profile == 'all' }}
-    runs-on: ${{ (github.event.inputs.runner_arch == 'x64') && 'macos-13' || 'macos-14' }}
+    runs-on: ${{ (github.event.inputs.runner_arch == 'x64') && 'macos-26-intel' || 'macos-26' }}
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
@@ -148,7 +148,7 @@ jobs:
   jvm:
     name: JVM (macOS ${{ github.event.inputs.runner_arch || 'arm64' }})
     if: ${{ github.event_name != 'workflow_dispatch' || inputs.profile == 'jvm' || inputs.profile == 'all' }}
-    runs-on: ${{ (github.event.inputs.runner_arch == 'x64') && 'macos-13' || 'macos-14' }}
+    runs-on: ${{ (github.event.inputs.runner_arch == 'x64') && 'macos-26-intel' || 'macos-26' }}
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
