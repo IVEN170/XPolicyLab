@@ -73,6 +73,19 @@ jobs:
           uptime
           echo "MACOS LOGIN OK: $(whoami) @ macOS $(sw_vers -productVersion) ($(uname -m))"
 
+      - name: Graphical session proof
+        run: |
+          echo "=== console user (macOS 自己的答案) ==="
+          stat -f%Su /dev/console
+          echo "=== GUI (Aqua) session ==="
+          launchctl print gui/$(id -u) 2>&1 | head -12 || echo "no gui session"
+          echo "=== WindowServer ==="
+          if pgrep -x WindowServer >/dev/null; then echo "WindowServer RUNNING (pid $(pgrep -x WindowServer))"; else echo "WindowServer NOT running"; fi
+          echo "=== loginwindow ==="
+          if pgrep -x loginwindow >/dev/null; then echo "loginwindow RUNNING (pid $(pgrep -x loginwindow))"; else echo "loginwindow NOT running"; fi
+          echo "=== displays ==="
+          system_profiler SPDisplaysDataType 2>/dev/null | sed -n '1,12p'
+
   # ---------------------------------------------------------------- Node
   node:
     name: Node (macOS ${{ github.event.inputs.runner_arch || 'arm64' }})
