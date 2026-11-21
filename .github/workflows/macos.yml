@@ -250,28 +250,38 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
 
       - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10'
 
       - name: Detect Gradle project
         id: detect
         run: |
+          cmd=""
           if [ -f ./gradlew ]; then
+            cmd="./gradlew"
+          elif [ -f build.gradle ] || [ -f build.gradle.kts ]; then
+            cmd="gradle"
+          fi
+          if [ -n "$cmd" ]; then
             echo "has=true" >> "$GITHUB_OUTPUT"
+            echo "gradle_cmd=$cmd" >> "$GITHUB_OUTPUT"
+            echo "using $cmd"
           else
             echo "has=false" >> "$GITHUB_OUTPUT"
-            echo "no gradlew — skip JVM build steps"
+            echo "no gradlew / build.gradle — skip JVM build steps"
           fi
 
       - name: Build
         if: steps.detect.outputs.has == 'true'
-        run: ./gradlew build --no-daemon --stacktrace
+        run: ${{ steps.detect.outputs.gradle_cmd }} build --no-daemon --stacktrace
 
       - name: Package (dmg / dist)
         if: steps.detect.outputs.has == 'true'
         continue-on-error: true
         run: |
-          ./gradlew packageDmg --no-daemon || \
-          ./gradlew packageDistributionForCurrentOS --no-daemon || \
-          ./gradlew assemble --no-daemon
+          ${{ steps.detect.outputs.gradle_cmd }} packageDmg --no-daemon || \
+          ${{ steps.detect.outputs.gradle_cmd }} packageDistributionForCurrentOS --no-daemon || \
+          ${{ steps.detect.outputs.gradle_cmd }} assemble --no-daemon
 
       - name: Collect artifacts
         if: always()
